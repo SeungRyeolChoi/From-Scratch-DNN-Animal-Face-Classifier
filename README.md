@@ -885,3 +885,43 @@ evaluate(weights, biases, test_data, test_labels, verbose=True)
 - 에폭별 학습 손실과 검증 손실을 그래프로 시각화합니다.
 - 학습 과정 중 손실의 변화를 시각적으로 확인할 수 있습니다.
 - 전체 테스트 데이터에 대해 최종 평가를 수행하고, 자세한 결과를 출력합니다.
+
+---
+
+### 최종 결론
+
+세팅
+
+```python
+BATCH_SIZE = 64
+INITIAL_LEARNING_RATE = 0.0001
+EPOCHS = 60
+HIDDEN_LAYERS = 6
+HIDDEN_NODES = [128,128,128,64,64,64]
+L2_LAMBDA = 0.001
+MAX_GRAD_NORM = 8.0
+beta1=0.5
+beta2=0.9
+alpha=0.0001
+데이터셋1
+```
+
+Accuracy: 56.55%
+
+Class 'cat': Precision = 43.64%, Recall = 57.14%
+Class 'dog': Precision = 52.17%, Recall = 57.14%
+Class 'tiger': Precision = 67.74%, Recall = 50.00%
+Class 'hyena': Precision = 72.22%, Recall = 61.90%
+
+Average Precision: 58.94%
+Average Recall: 56.55%
+
+```python
+Confusion Matrix:
+Actual \ Predicted
+cat       dog      tiger     hyena
+cat           24        15        2         1
+dog           14        24        2         2
+tiger         13        1         21        7
+hyena         4         6         6         26
+```
