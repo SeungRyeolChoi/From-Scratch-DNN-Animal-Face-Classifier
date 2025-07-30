@@ -24,15 +24,13 @@ HIDDEN_NODES = [128,128,128,64,64,64]
 OUTPUT_NODES = NUM_CLASSES
 L2_LAMBDA = 0.001
 EPSILON = 1e-5 
-```
 
-```bash
 # 그레이디언트 클리핑 임계값
 MAX_GRAD_NORM = 8.0
-```
 
 # 클래스 라벨
 animal_names = ["cat", "dog", "tiger", "hyena"]
+```
 NUM_CLASSES: 분류할 객체의 수로, 4개의 동물 클래스입니다.
 BATCH_SIZE: 한 번의 학습 단계에서 사용할 데이터 샘플의 수로 32로 설정했습니다.
 INITIAL_LEARNING_RATE: 초기 학습률입니다.
@@ -45,6 +43,8 @@ L2_LAMBDA: L2 정규화의 람다 값으로, 과적합을 방지하기 위해 �
 EPSILON: 작은 값으로, 계산 중에 0으로 나누는 오류를 방지하고자 사용하였습니다.
 MAX_GRAD_NORM: 그레이디언트 클리핑을 위한 임계값으로, 그레이디언트 폭주를 방지하고자 사용하였습니다.
 animal_names: 클래스 라벨을 정의한 리스트입니다.
+
+```bash
 # 데이터 로드 함수 정의
 def load_pgm_image(file_path):
     with open(file_path, 'rb') as file:
@@ -54,11 +54,14 @@ def load_pgm_image(file_path):
         data = np.fromfile(file, dtype=np.uint8)
         data = data.reshape((256, 256)).astype(np.float32) / 255.0
     return data.flatten()
+```
 데이터셋의 이미지들이 pgm형식으로 되어있는데, pgm 이미지 파일을 읽어와서 일차원 배열로 반환하는 함수입니다.
 바이너리 모드로 파일을 열고, 헤더 부분("P5", 이미지 크기, 최대 값)을 읽어 넘깁니다.
 픽셀 데이터를 np.uint8 타입으로 읽어옵니다.
 이미지를 (256, 256) 형태로 재구성하고, float32로 변환 후 0~1 사이로 정규화합니다.
 이미지를 평탄화하여 일차원 배열로 반환합니다.
+
+```bash
 def load_images_with_labels(folder_path, filenames):
     data = []
     labels = []
@@ -78,6 +81,7 @@ def get_label_from_filename(filename):
             return i
     print(f"Warning: Label not found for file {filename}")
     return -1  # 라벨을 찾지 못한 경우
+```
 데이터셋의 이미지들이 pgm형식으로 되어있는데, pgm 이미지 파일을 읽어와서 일차원 배열로 반환하는 함수입니다.
 
 바이너리 모드로 파일을 열고, 헤더 부분("P5", 이미지 크기, 최대 값)을 읽어 넘깁니다.
@@ -100,24 +104,34 @@ animal_names 리스트를 순회하며 파일명에 해당 동물명이 포함�
 
 해당되지 않는 경우 -1을 반환하고 경고 메시지를 출력합니다.
 
+```bash
 # 활성화 함수 정의
 def leaky_relu(x, alpha=0.0001):
     return np.where(x > 0, x, alpha * x)
+```
 Leaky ReLU 활성화 함수를 구현하였습니다.
 입력 x가 양수이면 그대로 반환하고, 음수이면 alpha를 곱하여 기울기를 유지합니다.
 alpha는 음수 영역의 기울기로 기본값은 0.01로 설정하였습니다.
+
+```bash
 def leaky_relu_derivative(x, alpha=0.0001):
     dx = np.ones_like(x)
     dx[x < 0] = alpha
     return dx
+```
 Leaky ReLU의 도함수를 계산하는 함수로 역전파 시 그레이디언트 계산에 사용됩니다.
 입력 x가 양수이면 도함수는 1, 음수이면 alpha입니다.
+
+```bash
 # He 초기화 함수
 def he_initialize(rows, cols):
     return np.random.randn(rows, cols) * np.sqrt(2.0 / rows)
+```
 가중치를 초기화 하는 함수로 He 초기화 함수를 선택하였습니다. 깊은 신경망에서의 기울기 소실 문제를 완화할 수 있는 역할을 합니다.
 표준 정규분포에서 난수를 생성하고, 분산을 2.0 / rows로 조정합니다.
 rows는 입력 노드 수, cols는 출력 노드 수입니다.
+
+```bash
 # 네트워크 초기화 함수
 def init_network():
     weights = []
@@ -133,11 +147,14 @@ def init_network():
     weights.append(he_initialize(HIDDEN_NODES[-1], OUTPUT_NODES))
     biases.append(np.zeros((1, OUTPUT_NODES)))
     return weights, biases
+```
 신경망의 가중치와 편향을 초기화하는 함수입니다.
 은닉층의 수만큼 루프를 돌며 각 층의 가중치와 편향을 초기화합니다.
 첫 번째 층의 입력 노드 수는 INPUT_NODES이며, 그 이후 층은 이전 층의 노드 수를 사용합니다.
 가중치는 he_initialize 함수를 사용하여 초기화하고, 편향은 0으로 초기화합니다.
 출력층의 가중치와 편향도 동일하게 초기화합니다
+
+```bash
 # 순전파 함수
 def forward(weights, biases, input_data):
     caches = []
@@ -155,6 +172,7 @@ def forward(weights, biases, input_data):
     softmax_output = z_exp / np.sum(z_exp, axis=1, keepdims=True)
     caches.append((out, weights[-1], biases[-1], None))
     return softmax_output, caches
+```
 순전파를 수행하여 입력 데이터로부터 예측값을 계산하는 함수입니다.
 caches 리스트는 역전파 시 필요한 중간 계산 값을 저장합니다.{효율적인 학습(역전파)을 위해}
 각 은닉층에 대해:
@@ -166,10 +184,13 @@ out은 다음 층의 입력이 됩니다.
 선형 변환 후 softmax 함수를 적용하여 클래스 확률을 계산합니다.
 안정성을 위해 z에서 최대값을 빼줍니다 (Overflow 방지).
 최종적으로 예측값과 caches를 반환합니다.
+
+```bash
 # 손실 함수 (Cross Entropy Loss)
 def compute_loss(predictions, targets):
     loss = -np.mean(np.sum(targets * np.log(predictions + EPSILON), axis=1))
     return loss
+```
 예측값과 실제 타깃을 비교하여 손실을 계산하는 함수입니다.
 모델의 예측이 얼마나 틀렸는지 확인하고자 사용하였습니다.
 신경망의 학습 과정에서 오차를 측정하고, 가중치 업데이트를 위한 그레이디언트 계산의 기반이 됩다
@@ -180,6 +201,8 @@ Softmax 출력과 자연스럽게 연계:
 분류 문제에서 출력층에 Softmax 활성화 함수를 사용하는 경우, Cross-Entropy Loss가 최적화에 매우 적합하고, Softmax는 각 클래스에 대한 확률 분포를 생성하므로, 이를 정답 분포와 비교하는 Cross-Entropy Loss가 잘 어울리기에 다음과 같이 설정하였습니다.
 EPSILON을 더하여 로그 함수의 0으로 나누는 오류를 방지합니다.
 각 샘플의 손실을 평균하여 반환합니다.
+
+```bash
 # 역전파 함수
 def backward(predictions, targets, caches):
     grads_w = []
@@ -205,6 +228,7 @@ def backward(predictions, targets, caches):
         grads_w.insert(0, dw)
         grads_b.insert(0, db)
     return grads_w, grads_b
+```
 역전파를 수행하여 가중치와 편향의 그레이디언트를 계산하는 함수입니다.
 grads_w, grads_b 리스트는 각 층의 가중치와 편향에 대한 그레이디언트를 저장합니다.
 출력층부터 역으로 계산합니다.
@@ -215,6 +239,8 @@ L2 정규화를 위해 L2_LAMBDA * w를 더해줍니다.
 delta를 업데이트하여 다음 층으로 전파합니다.
 은닉층에서도 같은 방식으로 계산하되, 활성화 함수의 도함수를 곱해줍니다.
 최종적으로 각 층의 그레이디언트를 반환합니다.
+
+```bash
 # 평가 함수
 def evaluate(weights, biases, test_data, test_labels, verbose=True):
     correct = 0
@@ -284,12 +310,15 @@ def evaluate(weights, biases, test_data, test_labels, verbose=True):
         print()
 
     return accuracy, total_loss / test_data.shape[0], precision_per_class, average_precision
+```
 모델의 성능을 평가하기 위한 함수입니다.
 정확도, 정밀도, 재현율, 혼동 행렬 등을 계산합니다.
 각 샘플에 대해 예측값과 실제 값을 비교하고, 혼동 행렬을 업데이트합니다.
 클래스별로 정밀도와 재현율을 계산하고 출력합니다.
 평균 정밀도와 평균 재현율을 계산합니다.
 최종적으로 정확도, 평균 손실, 클래스별 정밀도, 평균 정밀도를 반환합니다.
+
+```bash
 def save_weights_and_biases(weights, biases, weight_file=r"C:\weights\weights.bin", bias_file=r"C:\biases\biases.bin"):
     # 가중치 저장
     with open(weight_file, 'wb') as wf:
@@ -303,8 +332,11 @@ def save_weights_and_biases(weights, biases, weight_file=r"C:\weights\weights.bi
     
     print(f"Weights saved to {weight_file}")
     print(f"Biases saved to {bias_file}")
+```
 학습된 가중치와 편향을 파일로 저장하는 함수로 c코드에서 활용하기 위해 추가한 함수입니다.
 가중치와 편향을 이진 형식으로 저장하여 저장하고자하는 경로를 지정한 뒤에 이후에 로드할 수 있도록 합니다.
+
+```bash
 # 메인 학습 루프
 def main():
     train_directory = r"C:\Users\최승렬\Desktop\AI\augmented_images\train_pgm"
@@ -444,6 +476,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+```
 전체 학습 프로세스를 관리하는 메인 함수로, 데이터 로드, 전처리, 모델 초기화, 학습 루프, 평가 를 수행합니다.
 
 학습 및 테스트 데이터셋 디렉토리를 지정하고, 파일명을 가져옵니다. 여기서 생성된 데이터셋의 경로를 지정해서 실험을 진행하면 됩니다.
