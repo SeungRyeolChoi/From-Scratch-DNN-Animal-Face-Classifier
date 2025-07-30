@@ -909,11 +909,15 @@ alpha=0.0001
 Accuracy: 56.55%
 
 Class 'cat': Precision = 43.64%, Recall = 57.14%
+
 Class 'dog': Precision = 52.17%, Recall = 57.14%
+
 Class 'tiger': Precision = 67.74%, Recall = 50.00%
+
 Class 'hyena': Precision = 72.22%, Recall = 61.90%
 
 Average Precision: 58.94%
+
 Average Recall: 56.55%
 
 ```python
