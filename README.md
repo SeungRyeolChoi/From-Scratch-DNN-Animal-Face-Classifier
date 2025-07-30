@@ -229,11 +229,6 @@ convert_all_png_to_pgm(input_directory, output_directory)
 
 ```
 
-디렉토리 내부의 이미지들이 이상이 있는지에 대한 우려가 들어서 pgm형식으로 제대로 변환되었는지 확인을 해보았고, 메모장으로 열어서 p5형식인지를 확인해보았습니다.
-
-![image.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/07a76c6b-33a9-4cc8-9e91-35070c592965/69c217a6-e00f-43bf-9a39-abe459c73faf/image.png)
-
-확인 결과 pgm형식으로 제대로 변환은 된 것을 확인할 수 있었습니다.
 
 # python 버전 신경망
 
@@ -365,13 +360,6 @@ def leaky_relu(x, alpha=0.01):
 
 기존에는 Relu로 실험을 진행하였다가 죽은 ReLU 문제, 즉 입력이 0 이하일 때 출력이 0이 되어 이로 인해 뉴런이 비활성화되어 가중치가 업데이트되지 않는 현상이 발생하는지 확인하였고, 실제로 그러하여서 leaky_relu로 바꾸어서 음수 입력에 대해 작은 기울기 alpha를 적용하여 뉴런이 완전히 죽지 않도록 진행하였습니다.
 
-![Review and Comparison of Commonly Used Activation Functions
-for Deep Neural Networks(2020)](https://prod-files-secure.s3.us-west-2.amazonaws.com/07a76c6b-33a9-4cc8-9e91-35070c592965/b9618599-649e-462e-a714-47e7cf28664f/image.png)
-
-Review and Comparison of Commonly Used Activation Functions
-for Deep Neural Networks(2020)
-
-추론속도 역시 relu보다 빠른 논문자료를 확인할 수 있었기에 활성화 함수로 선정하고 실험하기로 결정하였습니다.
 
 ### leaky_relu_derivative
 
